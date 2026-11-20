@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATCHPASS | Your Game. Your Ticket.</title>
+<meta name="description" content="Discover football matches and submit ticket booking requests with MATCHPASS.">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#07111f;color:#fff}
+header{padding:20px 7%;display:flex;justify-content:space-between;align-items:center;background:#0d1b2d}
+.logo{font-size:25px;font-weight:900;color:#35e0a1}
+nav a{color:white;text-decoration:none;margin-left:18px}
+.hero{text-align:center;padding:80px 20px;background:linear-gradient(135deg,#102b40,#07111f)}
+.hero h1{font-size:42px;margin:10px}
+.hero span{color:#35e0a1}
+.hero p{color:#c5d1dc;font-size:17px}
+.button{display:inline-block;background:#35e0a1;color:#06131c;padding:13px 24px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:15px}
+section{padding:35px 7%}
+h2{color:#35e0a1}
+.panel{background:#102238;padding:25px;border-radius:14px;max-width:650px;margin:auto}
+label{display:block;margin:15px 0 7px}
+input,select{width:100%;padding:13px;border:1px solid #40536a;border-radius:7px;background:#07111f;color:white;font-size:16px}
+button{width:100%;padding:15px;background:#35e0a1;border:0;border-radius:8px;font-size:16px;font-weight:bold;margin-top:20px}
+button:disabled{opacity:.6}
+#message{margin-top:15px;line-height:1.5}
+footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
+.small{color:#aebdca;font-size:13px;line-height:1.5}
+@media(max-width:600px){.hero h1{font-size:32px}nav a{margin-left:8px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">MATCHPASS</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#booking">Book</a>
+  </nav>
+</header>
+
+<div class="hero" id="home">
+  <p>FOOTBALL. PASSION. EXPERIENCE.</p>
+  <h1>YOUR GAME.<br><span>YOUR TICKET.</span></h1>
+  <p>Discover football matches and send your ticket booking request.</p>
+  <a class="button" href="#booking">REQUEST TICKETS</a>
+</div>
+
+<section>
+  <h2>Welcome to MATCHPASS</h2>
+  <p>Your destination for discovering football matches and making ticket booking enquiries. From major European competitions to international football, your next matchday starts here.</p>
+</section>
+
+<section id="booking">
+  <div class="panel">
+    <h2>Request Your Tickets</h2>
+    <p>Complete the form and our team can follow up about availability and pricing.</p>
+
+    <form id="bookingForm">
+      <label for="name">Your full name</label>
+      <input id="name" type="text" required placeholder="Enter your name">
+
+      <label for="email">Email address</label>
+      <input id="email" type="email" required placeholder="Enter your email">
+
+      <label for="match">Match or event</label>
+      <input id="match" type="text" required placeholder="Example: Arsenal vs Chelsea">
+
+      <label for="quantity">Number of tickets</label>
+      <select id="quantity" required>
+        <option value="1">1 ticket</option>
+        <option value="2">2 tickets</option>
+        <option value="3">3 tickets</option>
+        <option value="4">4 tickets</option>
+        <option value="5">5 tickets</option>
+        <option value="6">6 tickets</option>
+        <option value="7">7 tickets</option>
+        <option value="8">8 tickets</option>
+        <option value="9">9 tickets</option>
+        <option value="10">10 tickets</option>
+      </select>
+
+      <label for="category">Ticket category</label>
+      <select id="category" required>
+        <option value="Standard">Standard</option>
+        <option value="Premium">Premium</option>
+        <option value="Hospitality">Hospitality</option>
+      </select>
+
+      <button id="submitBtn" type="submit">SUBMIT BOOKING REQUEST</button>
+      <div id="message" role="status"></div>
+    </form>
+
+    <p class="small">This form sends a booking enquiry only. It does not confirm ticket availability or guarantee a ticket. Never make payment until availability and the seller have been verified.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">MATCHPASS</div>
+  <p>YOUR GAME. YOUR TICKET.</p>
+  <p>© 2026 MATCHPASS. All rights reserved.</p>
+</footer>
+
+<script>
+const SUPABASE_URL = "https://uehpltaiqfsdrztzptyo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_82VfXQdsD-J4jDidTx1HVA_PPKegQTm";
+
+const form = document.getElementById("bookingForm");
+const button = document.getElementById("submitBtn");
+const message = document.getElementById("message");
+
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  button.disabled = true;
+  button.textContent = "SENDING...";
+  message.textContent = "";
+
+  const booking = {
+    customer_name: document.getElementById("name").value.trim(),
+    customer_email: document.getElementById("email").value.trim(),
+    match_name: document.getElementById("match").value.trim(),
+    ticket_quantity: Number(document.getElementById("quantity").value),
+    ticket_category: document.getElementById("category").value
+  };
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/booking_requests",
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(booking)
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error);
+    }
+
+    message.textContent = "Your booking request has been received. Our team will follow up with you.";
+    message.style.color = "#35e0a1";
+    form.reset();
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Sorry, your request could not be submitted. Please try again later.";
+    message.style.color = "#ff8585";
+  } finally {
+    button.disabled = false;
+    button.textContent = "SUBMIT BOOKING REQUEST";
+  }
+});
+</script>
+
+</body>
+  </html>
+    
