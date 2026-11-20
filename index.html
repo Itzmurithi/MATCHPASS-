@@ -151,7 +151,7 @@ form.addEventListener("submit", async function(event) {
 
   } catch (error) {
     console.error(error);
-    message.textContent = "Sorry, your request could not be submitted. Please try again later.";
+    message.textContent = message.textContent = "Error: " + error.message;
     message.style.color = "#ff8585";
   } finally {
     button.disabled = false;
