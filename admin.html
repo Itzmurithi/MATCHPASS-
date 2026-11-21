@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATCHPASS Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#07111f;color:white;font-family:Arial,sans-serif;padding:20px}
+header{padding:15px 0;border-bottom:1px solid #294057}
+h1{color:#35e0a1;margin:0}
+h2{color:#35e0a1}
+.panel{max-width:750px;margin:25px auto;background:#102238;padding:22px;border-radius:12px}
+input{width:100%;padding:13px;margin:8px 0 15px;background:#07111f;color:white;border:1px solid #40536a;border-radius:7px}
+button{padding:13px 18px;background:#35e0a1;color:#07111f;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
+#logout{background:#e6a34a}
+#message{margin:15px 0;overflow-wrap:anywhere}
+.booking{background:#07111f;border:1px solid #294057;padding:15px;margin:12px 0;border-radius:8px;overflow-wrap:anywhere}
+.muted{color:#aebdca;font-size:13px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header>
+<h1>MATCHPASS</h1>
+<p class="muted">ADMIN DASHBOARD</p>
+</header>
+
+<div class="panel" id="loginPanel">
+<h2>Admin Login</h2>
+<form id="loginForm">
+<label>Email address</label>
+<input id="email" type="email" required>
+<label>Password</label>
+<input id="password" type="password" required>
+<button type="submit">LOGIN</button>
+</form>
+<div id="message"></div>
+</div>
+
+<div class="panel hidden" id="dashboard">
+<h2>Booking Requests</h2>
+<button id="refresh">Refresh bookings</button>
+<button id="logout">Log out</button>
+<div id="bookings"></div>
+</div>
+
+<script>
+const URL = "https://uehpltaiqfsdrztzptyo.supabase.co";
+const KEY = "sb_publishable_82VfXQdsD-J4jDidTx1HVA_PPKegQTm";
+
+let accessToken = "";
+
+const message = document.getElementById("message");
+const bookings = document.getElementById("bookings");
+
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  message.textContent = "Signing in...";
+
+  try {
+    const response = await fetch(URL + "/auth/v1/token?grant_type=password", {
+      method: "POST",
+      headers: {
+        "apikey": KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.msg || data.message || "Login failed");
+
+    accessToken = data.access_token;
+
+    const check = await fetch(
+      URL + "/rest/v1/admin_users?select=user_id&user_id=eq." + encodeURIComponent(data.user.id),
+      {
+        headers: {
+          "apikey": KEY,
+          "Authorization": "Bearer " + accessToken
+        }
+      }
+    );
+
+    if (!check.ok) throw new Error("Could not verify admin access.");
+
+    const admins = await check.json();
+
+    if (!admins.length) {
+      accessToken = "";
+      throw new Error("This account is not an authorised administrator.");
+    }
+
+    document.getElementById("loginPanel").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    await loadBookings();
+
+  } catch (error) {
+    message.textContent = error.message;
+  }
+});
+
+async function loadBookings() {
+  bookings.textContent = "Loading booking requests...";
+
+  try {
+    const response = await fetch(
+      URL + "/rest/v1/booking_requests?select=id,customer_name,customer_email,match_name,ticket_quantity,ticket_category,status,created_at&order=created_at.desc",
+      {
+        headers: {
+          "apikey": KEY,
+          "Authorization": "Bearer " + accessToken
+        }
+      }
+    );
+
+    if (!response.ok) throw new Error("Could not load bookings.");
+
+    const data = await response.json();
+
+    if (!data.length) {
+      bookings.textContent = "No booking requests yet.";
+      return;
+    }
+
+    bookings.innerHTML = "";
+
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "booking";
+
+      const details = [
+        ["Customer", item.customer_name],
+        ["Email", item.customer_email],
+        ["Match", item.match_name],
+        ["Tickets", item.ticket_quantity],
+        ["Category", item.ticket_category],
+        ["Status", item.status || "pending"],
+        ["Received", new Date(item.created_at).toLocaleString()]
+      ];
+
+      details.forEach(([label, value]) => {
+        const line = document.createElement("p");
+        line.textContent = label + ": " + value;
+        card.appendChild(line);
+      });
+
+      bookings.appendChild(card);
+    });
+
+  } catch (error) {
+    bookings.textContent = error.message;
+  }
+}
+
+document.getElementById("refresh").addEventListener("click", loadBookings);
+
+document.getElementById("logout").addEventListener("click", function() {
+  accessToken = "";
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("loginPanel").classList.remove("hidden");
+  document.getElementById("password").value = "";
+  message.textContent = "You have logged out.";
+  bookings.textContent = "";
+});
+</script>
+
+</body>
+  </html>
+  
