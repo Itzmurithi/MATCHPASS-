@@ -157,13 +157,13 @@ async function loadBookings() {
 
       const approve = document.createElement("button");
       approve.textContent = "Approve";
-      approve.onclick = () => updateStatus(item.id, "approved");
+      approve.onclick = () => updateStatus(item.id, "approved", item.customer_email, item.match_name, item.customer_name);
 
       const reject = document.createElement("button");
       reject.textContent = "Reject";
       reject.style.marginLeft = "10px";
       reject.style.background = "#e45b5b";
-      reject.onclick = () => updateStatus(item.id, "rejected");
+      reject.onclick = () => updateStatus(item.id, "rejected", item.customer_email, item.match_name, item.customer_name);
 
       actions.appendChild(approve);
       actions.appendChild(reject);
@@ -194,7 +194,26 @@ async function loadBookings() {
       }
     );
 
-    if (!response.ok) throw new Error("Status update failed.");
+    if (!response.ok) throw new Error("Status update failed.");     const emailResponse = await fetch(
+      "https://matchpass-email.kelvomgazlee014.workers.dev",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + accessToken
+        },
+        body: JSON.stringify({
+          email: email,
+          match: match,
+          status: status,
+          customer: customer
+        })
+      }
+    );
+
+    if (!emailResponse.ok) {
+      throw new Error("Booking updated, but customer email could not be sent.");
+  }
 
     alert("Booking " + status + " successfully!");
     await loadBookings();
