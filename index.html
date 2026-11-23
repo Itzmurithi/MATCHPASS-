@@ -27,7 +27,11 @@ button:disabled{opacity:.6}
 #message{margin-top:15px;line-height:1.5}
 footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
 .small{color:#aebdca;font-size:13px;line-height:1.5}
-@media(max-width:600px){.hero h1{font-size:32px}nav a{margin-left:8px;font-size:13px}}
+@media(max-width:600px){
+  .match-grid{grid-template-columns:1fr}
+  .match-card{padding:18px}
+}
+  @media(max-width:600px){.hero h1{font-size:32px}nav a{margin-left:8px;font-size:13px}}
 .match-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:22px}
 .match-card{background:#102238;border:1px solid #294057;border-radius:12px;padding:22px}
 .match-card h3{color:#35e0a1;margin-top:0}
