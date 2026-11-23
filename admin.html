@@ -176,7 +176,7 @@ async function loadBookings() {
 }
 
 
-  async function updateStatus(id, status) {
+  async function updateStatus(id, status, email, match, customer) {
   if (!confirm("Are you sure you want to " + status + " this booking?")) return;
 
   try {
