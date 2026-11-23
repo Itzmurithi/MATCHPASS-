@@ -95,7 +95,7 @@ footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
   <summary>VIEW MATCH DETAILS</summary>
   <p>Competition: Premier League</p>
   <p>Ticket availability is subject to confirmation.</p>
-  </details><a href="#booking" class="button" onclick="document.getElementById('match').value='Nottingham Forest vs Chelsea'">REQUEST TICKETS</a>
+  </details><a href="#booking" class="button" onclick="document.getElementById('match').value='Nottingham Forest vs Chelsea';document.getElementById('matchDate').value='27 November 2026, 8:00 PM GMT'">REQUEST TICKETS</a>
     
   <p>🏆 Premier League</p>
   <p>📅 27 November 2026</p>
@@ -104,7 +104,7 @@ footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
   <summary>VIEW MATCH DETAILS</summary>
   <p>Competition: Premier League</p>
   <p>Ticket availability is subject to confirmation.</p>
-  </details><a href="#booking" class="button" onclick="document.getElementById('match').value='Manchester United vs Brentford'">REQUEST TICKETS</a>
+  </details><a href="#booking" class="button" onclick="document.getElementById('match').value='Manchester United vs Brentford';document.getElementById('matchDate').value='28 November 2026, 3:00 PM GMT'">REQUEST TICKETS</a>
     
   <p>🏆 Premier League</p>
   <p>📅 28 November 2026</p>
@@ -113,7 +113,7 @@ footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
   <summary>VIEW MATCH DETAILS</summary>
   <p>Competition: Premier League</p>
   <p>Ticket availability is subject to confirmation.</p>
-  </details><a href="#booking" class="button" onclick="document.getElementById('match').value='Arsenal vs Manchester City'">REQUEST TICKETS</a>
+  </details><a href="#booking" class="button" onclick="document.getElementById('match').value='Arsenal vs Manchester City';document.getElementById('matchDate').value='29 November 2026, 4:30 PM GMT'">REQUEST TICKETS</a>
     
   <p>🏆 Premier League</p>
   <p>📅 29 November 2026</p>
@@ -161,7 +161,9 @@ footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
       <input id="email" type="email" required placeholder="Enter your email">
 
       <label for="match">Match or event</label>
-      <input id="match" type="text" required placeholder="Select a match" readonly>
+      <input id="match" type="text" required placeholder="Select a match" readonly><label for="matchDate">Match date and kickoff time</label>
+<input id="matchDate" type="text" placeholder="Automatically selected" readonly>
+      
 
       <label for="quantity">Number of tickets</label>
       <select id="quantity" required>
