@@ -28,6 +28,12 @@ button:disabled{opacity:.6}
 footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
 .small{color:#aebdca;font-size:13px;line-height:1.5}
 @media(max-width:600px){.hero h1{font-size:32px}nav a{margin-left:8px;font-size:13px}}
+.match-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:22px}
+.match-card{background:#102238;border:1px solid #294057;border-radius:12px;padding:22px}
+.match-card h3{color:#35e0a1;margin-top:0}
+.match-card p{color:#c5d1dc;line-height:1.5}
+.match-card a{display:inline-block;margin-top:10px;color:#35e0a1;font-weight:bold;text-decoration:none}
+.match-card a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -52,7 +58,31 @@ footer{text-align:center;padding:25px;color:#9eacbc;background:#0d1b2d}
   <p>Your destination for discovering football matches and making ticket booking enquiries. From major European competitions to international football, your next matchday starts here.</p>
 </section>
 
-<section id="booking">
+<section id="matches">
+  <h2>Featured Matches</h2>
+  <p class="small">Explore football competitions and send us your ticket enquiries.</p>
+
+  <div class="match-grid">
+    <div class="match-card">
+      <h3>🏆 Premier League</h3>
+      <p>Follow the biggest clubs in English football.</p>
+      <a href="#booking">REQUEST TICKETS</a>
+    </div>
+
+    <div class="match-card">
+      <h3>🌍 Champions League</h3>
+      <p>Experience Europe's biggest club competition.</p>
+      <a href="#booking">REQUEST TICKETS</a>
+    </div>
+
+    <div class="match-card">
+      <h3>⚽ International Football</h3>
+      <p>Explore exciting international football events.</p>
+      <a href="#booking">REQUEST TICKETS</a>
+    </div>
+  </div>
+</section>
+  <section id="booking">
   <div class="panel">
     <h2>Request Your Tickets</h2>
     <p>Complete the form and our team can follow up about availability and pricing.</p>
