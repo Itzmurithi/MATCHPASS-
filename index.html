@@ -231,7 +231,8 @@ form.addEventListener("submit", async function(event) {
 
   const booking = {
     customer_name: document.getElementById("name").value.trim(),
-    customer_email: document.getElementById("email").value.trim(),
+    customer_email: document.getElementById("email").value.trim(),customer_phone: document.getElementById("phone").value.trim(),
+    
     match_name: document.getElementById("match").value.trim(),
     ticket_quantity: Number(document.getElementById("quantity").value),
     ticket_category: document.getElementById("category").value
