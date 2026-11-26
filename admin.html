@@ -112,7 +112,7 @@ async function loadBookings() {
 
   try {
     const response = await fetch(
-      URL + "/rest/v1/booking_requests?select=id,customer_name,customer_email,match_name,ticket_quantity,ticket_category,status,created_at&order=created_at.desc",
+      URL + "/rest/v1/booking_requests?select=id,customer_name,customer_email,customer_phone,match_name,match_date,ticket_quantity,ticket_category,status,created_at&order=created_at.desc",
       {
         headers: {
           "apikey": KEY,
