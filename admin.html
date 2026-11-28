@@ -108,6 +108,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     if (!response.ok) throw new Error(data.msg || data.message || "Login failed");
 
     accessToken = data.access_token;
+    console.log("Logged-in user ID:", data.user.id);
 
     const check = await fetch(
       URL + "/rest/v1/admin_users?select=user_id&user_id=eq." + encodeURIComponent(data.user.id),
