@@ -44,7 +44,37 @@ button{padding:13px 18px;background:#35e0a1;color:#07111f;border:0;border-radius
 <h2>Booking Requests</h2>
 <button id="refresh">Refresh bookings</button>
 <button id="logout">Log out</button>
-<div id="bookings"></div>
+<div id="bookings"></div><hr>
+<h2>Match Management</h2>
+
+<form id="matchForm">
+  <label>Home Team</label>
+  <input id="homeTeam" type="text" required>
+
+  <label>Away Team</label>
+  <input id="awayTeam" type="text" required>
+
+  <label>Competition</label>
+  <input id="competition" type="text" required>
+
+  <label>Match Date and Time</label>
+  <input id="matchDateTime" type="datetime-local" required>
+
+  <label>Venue</label>
+  <input id="venue" type="text">
+
+  <label>Status</label>
+  <select id="matchStatus">
+    <option value="UPCOMING">UPCOMING</option>
+    <option value="LIVE">LIVE</option>
+    <option value="COMPLETED">COMPLETED</option>
+  </select>
+
+  <button type="submit">ADD MATCH</button>
+</form>
+
+<div id="matches"></div>
+  
 </div>
 
 <script>
@@ -219,7 +249,7 @@ async function loadBookings() {
 
     alert("Booking " + status + " successfully!");
     await loadBookings();
-
+await loadMatches();
   } catch (error) {
     alert(error.message);
   }
@@ -232,6 +262,87 @@ document.getElementById("logout").addEventListener("click", function() {
   document.getElementById("password").value = "";
   message.textContent = "You have logged out.";
   bookings.textContent = "";
+});
+async function loadMatches() {
+  const matchList = document.getElementById("matches");
+  matchList.textContent = "Loading matches...";
+
+  try {
+    const response = await fetch(
+      URL + "/rest/v1/matches?select=*&order=match_date.asc",
+      {
+        headers: {
+          "apikey": KEY,
+          "Authorization": "Bearer " + accessToken
+        }
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) throw new Error("Could not load matches.");
+
+    matchList.innerHTML = "";
+
+    data.forEach(match => {
+      const item = document.createElement("div");
+      item.className = "panel";
+
+      const title = document.createElement("h3");
+      title.textContent = match.home_team + " vs " + match.away_team;
+
+      const details = document.createElement("p");
+      details.textContent =
+        match.competition + " | " +
+        new Date(match.match_date).toLocaleString() +
+        " | " + match.status;
+
+      const venue = document.createElement("p");
+      venue.textContent = match.venue || "Venue not specified";
+
+      item.append(title, details, venue);
+      matchList.appendChild(item);
+    });
+
+    if (data.length === 0) {
+      matchList.textContent = "No matches added yet.";
+    }
+  } catch (error) {
+    matchList.textContent = error.message;
+  }
+}
+document.getElementById("matchForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const match = {
+    home_team: document.getElementById("homeTeam").value.trim(),
+    away_team: document.getElementById("awayTeam").value.trim(),
+    competition: document.getElementById("competition").value.trim(),
+    match_date: new Date(document.getElementById("matchDateTime").value).toISOString(),
+    venue: document.getElementById("venue").value.trim(),
+    status: document.getElementById("matchStatus").value
+  };
+
+  try {
+    const response = await fetch(URL + "/rest/v1/matches", {
+      method: "POST",
+      headers: {
+        "apikey": KEY,
+        "Authorization": "Bearer " + accessToken,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(match)
+    });
+
+    if (!response.ok) throw new Error(await response.text());
+
+    alert("Match added successfully!");
+    document.getElementById("matchForm").reset();
+    await loadMatches();
+
+  } catch (error) {
+    alert("Could not add match: " + error.message);
+  }
 });
 </script>
 
